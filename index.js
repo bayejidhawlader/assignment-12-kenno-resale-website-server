@@ -34,9 +34,9 @@ async function run() {
       .collection("homeCategory");
 
     // Show Oppo Page
-    const oppoCollection = client
+    const allCategoriesCollection = client
       .db("kennoAssinment12")
-      .collection("oppoCategory");
+      .collection("allCategories");
 
     // 09 Data Load Show Home Page 3 Categoey
     app.get("/homeCategory", async (req, res) => {
@@ -53,7 +53,40 @@ async function run() {
       });
     });
 
-    // 10 Show Oppo Page
+    app.get("/allCategories", async (req, res) => {
+      const query = {};
+      const cursor = allCategoriesCollection.find(query);
+      const allCategories = await cursor.toArray();
+      res.send(allCategories);
+
+      app.get("/allCategories/:id", async (req, res) => {
+        const id = req.params.id;
+        console.log(id);
+        // const query = { _id: ObjectId(id) };
+        let query = { catagoryId: id };
+        const cursor = allCategoriesCollection.findOne(query);
+        const allCategories = await cursor.toArray();
+        res.send(allCategories);
+      });
+    });
+
+    // 10 Show All Qategory
+    // app.get("/allCategories", async (req, res) => {
+    //   const query = {};
+    //   const cursor = allCategoriesCollection.find(query);
+    //   const allCategories = await cursor.toArray(query);
+    //   res.send(allCategories);
+
+    //   app.get("/allCategories/:id", async (req, res) => {
+    //     const id = req.query.id;
+    //     console.log(id);
+    //     let query = { catagoryId: id };
+    //     const cursor = allCategoriesCollection.find(query);
+    //     const allCategories = await cursor.toArray();
+    //     res.send(allCategories);
+    //   });
+    // });
+
     app.get("/oppoCategory", async (req, res) => {
       const query = {};
       const cursor = oppoCollection.find(query);
