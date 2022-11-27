@@ -23,86 +23,77 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-console.log(uri);
+// console.log(uri);
 
 // 08
 async function run() {
   try {
-    // Show 3 Category to the Home pge
-    const categoryCollection = client
+    // 06 Show 3 category and 6 Product Collection
+    const productCollection = client
       .db("kennoAssinment12")
-      .collection("homeCategory");
+      .collection("categoryProduct");
 
-    // Show Oppo Page
-    const allCategoriesCollection = client
+    // 07 Show 3 category and 6 Product
+    app.get("/category", async (req, res) => {
+      const query = {};
+      const options = await productCollection.find(query).toArray();
+      res.send(options);
+    });
+    app.get("/category/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const carService = await productCollection.findOne(query);
+      res.send(carService);
+    });
+
+    // booking
+    const bookingCollection = client
       .db("kennoAssinment12")
-      .collection("allCategories");
-
-    // 09 Data Load Show Home Page 3 Categoey
-    app.get("/homeCategory", async (req, res) => {
-      const query = {};
-      const cursor = categoryCollection.find(query);
-      const homeCategory = await cursor.toArray();
-      res.send(homeCategory);
-
-      app.get("/homeCategory/:id", async (req, res) => {
-        const id = req.params.id;
-        const query = { _id: ObjectId(id) };
-        const homeCategory = await categoryCollection.findOne(query);
-        res.send(homeCategory);
-      });
+      .collection("booking");
+    app.get("/bookings", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const bookings = await bookingCollection.find(query).toArray();
+      res.send(bookings);
+    });
+    app.post("/bookings", async (req, res) => {
+      const booking = req.body;
+      console.log(booking);
+      const result = await bookingCollection.insertOne(booking);
+      res.send(result);
     });
 
-    app.get("/allCategories", async (req, res) => {
-      const query = {};
-      const cursor = allCategoriesCollection.find(query);
-      const allCategories = await cursor.toArray();
-      res.send(allCategories);
-
-      app.get("/allCategories/:id", async (req, res) => {
-        const id = req.params.id;
-        console.log(id);
-        // const query = { _id: ObjectId(id) };
-        let query = { catagoryId: id };
-        const cursor = allCategoriesCollection.findOne(query);
-        const allCategories = await cursor.toArray();
-        res.send(allCategories);
+    //  find alluser
+    app.get("/allUser", (req, res) => {
+      UsersCollection.find({}).toArray((arr, document) => {
+        res.send(document);
       });
     });
-
-    // 10 Show All Qategory
-    // app.get("/allCategories", async (req, res) => {
-    //   const query = {};
-    //   const cursor = allCategoriesCollection.find(query);
-    //   const allCategories = await cursor.toArray(query);
-    //   res.send(allCategories);
-
-    //   app.get("/allCategories/:id", async (req, res) => {
-    //     const id = req.query.id;
-    //     console.log(id);
-    //     let query = { catagoryId: id };
-    //     const cursor = allCategoriesCollection.find(query);
-    //     const allCategories = await cursor.toArray();
-    //     res.send(allCategories);
-    //   });
-    // });
-
-    app.get("/oppoCategory", async (req, res) => {
-      const query = {};
-      const cursor = oppoCollection.find(query);
-      const oppoCategory = await cursor.toArray();
-      res.send(oppoCategory);
-
-      app.get("/oppoCategory/:id", async (req, res) => {
-        const id = req.params.id;
-        const query = { _id: ObjectId(id) };
-        const oppoCategory = await oppoCollection.findOne(query);
-        res.send(oppoCategory);
-      });
+    app.get("/jwt", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const user = await UsersCollection.findOne(query);
+      if (user) {
+        const token = jwt.sign;
+      }
+      res.send({ accessToken: "token" });
     });
 
-    // 10 Single Data Load
-    // 08 singleService data load to a page with full spacification
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      console.log(user);
+      const result = await UsersCollection.insertOne(user);
+      res.send(result);
+    });
+
+    // is admin chaeck
+
+    app.get("/isAdmin", (req, res) => {
+      const email = req.body.email;
+      adminCollection.find({ email: email }).toArray((arr, document) => {
+        res.send(document.length > 0);
+      });
+    });
   } finally {
   }
 }
