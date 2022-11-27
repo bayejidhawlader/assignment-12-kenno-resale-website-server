@@ -5,6 +5,8 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 
+// const jwt = require("jsonwebtoken");
+
 const app = express();
 
 // 02 Middleware
@@ -23,7 +25,6 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-// console.log(uri);
 
 // 08
 async function run() {
