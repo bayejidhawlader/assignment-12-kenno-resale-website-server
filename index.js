@@ -2,10 +2,9 @@
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
-
-// const jwt = require("jsonwebtoken");
 
 const app = express();
 
@@ -64,26 +63,35 @@ async function run() {
       res.send(result);
     });
 
+    const adminCollection = client.db("Carsuser").collection("admin");
     //  find alluser
     app.get("/allUser", (req, res) => {
-      UsersCollection.find({}).toArray((arr, document) => {
+      usersCollection.find({}).toArray((arr, document) => {
         res.send(document);
       });
     });
+
     app.get("/jwt", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
-      const user = await UsersCollection.findOne(query);
+      const user = await usersCollection.findOne(query);
+      console.log(user);
       if (user) {
-        const token = jwt.sign;
+        const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, {
+          expiresIn: "7d",
+        });
+        return res.send({ accessToken: token });
       }
-      res.send({ accessToken: "token" });
+      res.status(403).send({ accessToken: "" });
     });
+
+    // All Users
+    const usersCollection = client.db("kennoAssinment12").collection("users");
 
     app.post("/users", async (req, res) => {
       const user = req.body;
       console.log(user);
-      const result = await UsersCollection.insertOne(user);
+      const result = await usersCollection.insertOne(user);
       res.send(result);
     });
 
