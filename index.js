@@ -1,4 +1,5 @@
-// 01 Basic Setup
+// 01 Basic Setup 15(Verify JWT 29)
+
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -25,6 +26,24 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
+// 15 Veryfy JWT
+function verifyJWT(req, res, next) {
+  console.log("Token Inside verify JWT", req.headers.authorization);
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send("unsuthorize access");
+  }
+  const token = authHeader.split(" ")[1];
+
+  jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
+    if (err) {
+      return res.status(403).send({ message: "forbiden access" });
+    }
+    req.decoded = decoded;
+    next();
+  });
+}
+
 // 08
 async function run() {
   try {
@@ -46,16 +65,22 @@ async function run() {
       res.send(carService);
     });
 
-    // booking
+    // Booking Collection Show
     const bookingCollection = client
       .db("kennoAssinment12")
       .collection("booking");
-    app.get("/bookings", async (req, res) => {
+
+    app.get("/bookings", verifyJWT, async (req, res) => {
       const email = req.query.email;
+      const decodedEmail = req.decoded.email;
+      if (email !== decodedEmail) {
+        return res.status(403).send({ message: "forbidenn access" });
+      }
       const query = { email: email };
       const bookings = await bookingCollection.find(query).toArray();
       res.send(bookings);
     });
+
     app.post("/bookings", async (req, res) => {
       const booking = req.body;
       console.log(booking);
@@ -63,14 +88,23 @@ async function run() {
       res.send(result);
     });
 
-    const adminCollection = client.db("Carsuser").collection("admin");
     //  find alluser
-    app.get("/allUser", (req, res) => {
+    app.get("/alluser", (req, res) => {
       usersCollection.find({}).toArray((arr, document) => {
         res.send(document);
       });
     });
 
+    // See All Admin Here
+    const adminCollection = client.db("kennoAssinment12").collection("admin");
+    app.get("/isAdmin", (req, res) => {
+      const email = req.body.email;
+      adminCollection.find({ email: email }).toArray((arr, document) => {
+        res.send(document.length > 0);
+      });
+    });
+
+    // Jwt
     app.get("/jwt", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
@@ -87,7 +121,6 @@ async function run() {
 
     // All Users
     const usersCollection = client.db("kennoAssinment12").collection("users");
-
     app.post("/users", async (req, res) => {
       const user = req.body;
       console.log(user);
@@ -95,13 +128,10 @@ async function run() {
       res.send(result);
     });
 
-    // is admin chaeck
-
-    app.get("/isAdmin", (req, res) => {
-      const email = req.body.email;
-      adminCollection.find({ email: email }).toArray((arr, document) => {
-        res.send(document.length > 0);
-      });
+    app.get("/users", (req, res) => {
+      const query = {};
+      const users = usersCollection.find(query).toArray();
+      res.send(users);
     });
   } finally {
   }
