@@ -88,21 +88,14 @@ async function run() {
       res.send(result);
     });
 
-    //  find alluser
-    app.get("/alluser", (req, res) => {
-      usersCollection.find({}).toArray((arr, document) => {
-        res.send(document);
-      });
-    });
-
     // See All Admin Here
-    const adminCollection = client.db("kennoAssinment12").collection("admin");
-    app.get("/isAdmin", (req, res) => {
-      const email = req.body.email;
-      adminCollection.find({ email: email }).toArray((arr, document) => {
-        res.send(document.length > 0);
-      });
-    });
+    // const adminCollection = client.db("kennoAssinment12").collection("admin");
+    // app.get("/isAdmin", (req, res) => {
+    //   const email = req.body.email;
+    //   adminCollection.find({ email: email }).toArray((arr, document) => {
+    //     res.send(document.length > 0);
+    //   });
+    // });
 
     // Jwt
     app.get("/jwt", async (req, res) => {
@@ -132,6 +125,37 @@ async function run() {
       const query = {};
       const users = usersCollection.find(query).toArray();
       res.send(users);
+    });
+    //  find alluser
+    app.get("/alluser", (req, res) => {
+      usersCollection.find({}).toArray((arr, document) => {
+        res.send(document);
+      });
+    });
+
+    app.put("/alluser/admin/:id", verifyJWT, async (req, res) => {
+      const decodedEmail = req.decoded.email;
+      const query = { email: decodedEmail };
+      const user = await usersCollection.findOne(query);
+      if (user?.role !== "admin") {
+        return res
+          .status(403)
+          .send({ message: "forbidden access Check Admin" });
+      }
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          role: "admin",
+        },
+      };
+      const result = await usersCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
     });
   } finally {
   }
