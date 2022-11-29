@@ -150,6 +150,14 @@ async function run() {
       res.send(options);
     });
 
+    // Delete Seller Click Handleing
+    app.delete("/user/sellers/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await usersCollection.deleteOne(filter);
+      res.send(result);
+    });
+
     app.get("/user/sellers/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email };
@@ -163,6 +171,14 @@ async function run() {
       // const query = { option }
       const options = await usersCollection.find({ role: "buyer" }).toArray();
       res.send(options);
+    });
+
+    // Delete Buyer Click Handleing
+    app.delete("/user/buyers/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await usersCollection.deleteOne(filter);
+      res.send(result);
     });
 
     // Check a user Admin or Not useAdmin.js (DashBoardLayout.js 6)
