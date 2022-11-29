@@ -126,11 +126,20 @@ async function run() {
       const users = usersCollection.find(query).toArray();
       res.send(users);
     });
+
     //  find alluser
     app.get("/alluser", (req, res) => {
       usersCollection.find({}).toArray((arr, document) => {
         res.send(document);
       });
+    });
+
+    // Check a user Admin or Not useAdmin.js (DashBoardLayout.js 6)
+    app.get("/alluser/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isAdmin: user?.role == "admin" });
     });
 
     app.put("/alluser/admin/:id", verifyJWT, async (req, res) => {
@@ -155,6 +164,30 @@ async function run() {
         updatedDoc,
         options
       );
+      res.send(result);
+    });
+
+    // Add Product Collection
+    const ProductCollection = client
+      .db("kennoAssinment12")
+      .collection("addProduct");
+
+    // Add Product
+    app.get("/products", async (req, res) => {
+      const query = {};
+      const result = await ProductCollection.find(query).toArray();
+      res.send(result);
+    });
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+      const result = await ProductCollection.insertOne(product);
+      res.send(result);
+    });
+
+    app.delete("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await ProductCollection.deleteOne(filter);
       res.send(result);
     });
   } finally {
