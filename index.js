@@ -173,23 +173,23 @@ async function run() {
       .collection("addProduct");
 
     // Add Product
-    app.get("/products", async (req, res) => {
-      const query = {};
-      const result = await ProductCollection.find(query).toArray();
-      res.send(result);
-    });
-    app.post("/products", async (req, res) => {
-      const product = req.body;
-      const result = await ProductCollection.insertOne(product);
-      res.send(result);
-    });
+    // app.get("/products", async (req, res) => {
+    //   const query = {};
+    //   const result = await ProductCollection.find(query).toArray();
+    //   res.send(result);
+    // });
+    // app.post("/products", async (req, res) => {
+    //   const product = req.body;
+    //   const result = await ProductCollection.insertOne(product);
+    //   res.send(result);
+    // });
 
-    app.delete("/products/:id", async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
-      const result = await ProductCollection.deleteOne(filter);
-      res.send(result);
-    });
+    // app.delete("/products/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const filter = { _id: ObjectId(id) };
+    //   const result = await ProductCollection.deleteOne(filter);
+    //   res.send(result);
+    // });
   } finally {
   }
 }
