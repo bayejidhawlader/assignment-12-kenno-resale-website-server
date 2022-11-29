@@ -150,6 +150,13 @@ async function run() {
       res.send(options);
     });
 
+    app.get("/user/sellers/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isSeller: user?.role == "seller" });
+    });
+
     // Show all Buyer
     app.get("/user/buyers", async (req, res) => {
       const option = {};
