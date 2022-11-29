@@ -134,6 +134,30 @@ async function run() {
       });
     });
 
+    // All Seller Showing to Admin Dashboard
+    // app.get("/seller", async (req, res) => {
+    //   const query = {};
+    //   const seller = await usersCollection.find(query).toArray();
+    //   res.send(seller);
+    //   res.send({ seller: user?.role == "seller" });
+    // });
+
+    // Show all seller
+    app.get("/user/sellers", async (req, res) => {
+      const option = {};
+      // const query = { option }
+      const options = await usersCollection.find({ role: "seller" }).toArray();
+      res.send(options);
+    });
+
+    // Show all Buyer
+    app.get("/user/buyers", async (req, res) => {
+      const option = {};
+      // const query = { option }
+      const options = await usersCollection.find({ role: "buyer" }).toArray();
+      res.send(options);
+    });
+
     // Check a user Admin or Not useAdmin.js (DashBoardLayout.js 6)
     app.get("/alluser/admin/:email", async (req, res) => {
       const email = req.params.email;
@@ -168,28 +192,28 @@ async function run() {
     });
 
     // Add Product Collection
-    const ProductCollection = client
+    const addProductCollection = client
       .db("kennoAssinment12")
-      .collection("addProduct");
+      .collection("addproduct");
 
     // Add Product
-    // app.get("/products", async (req, res) => {
-    //   const query = {};
-    //   const result = await ProductCollection.find(query).toArray();
-    //   res.send(result);
-    // });
-    // app.post("/products", async (req, res) => {
-    //   const product = req.body;
-    //   const result = await ProductCollection.insertOne(product);
-    //   res.send(result);
-    // });
+    app.get("/products", async (req, res) => {
+      const query = {};
+      const result = await addProductCollection.find(query).toArray();
+      res.send(result);
+    });
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+      const result = await addProductCollection.insertOne(product);
+      res.send(result);
+    });
 
-    // app.delete("/products/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const filter = { _id: ObjectId(id) };
-    //   const result = await ProductCollection.deleteOne(filter);
-    //   res.send(result);
-    // });
+    app.delete("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await addProductCollection.deleteOne(filter);
+      res.send(result);
+    });
   } finally {
   }
 }
