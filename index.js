@@ -172,6 +172,24 @@ async function run() {
       res.send(result);
     });
 
+    // USer created for Social Media Login
+    // app.post("/user", async (req, res) => {
+    //   try {
+    //     const user = req.body;
+    //     const haveAccount = await users.insertOne({ email: user.email });
+    //     if (!haveAccount) {
+    //       const users = await users.insertOne(user);
+    //       res.send({
+    //         succcess: true,
+    //         message: "Successfully created a new User",
+    //         data: users,
+    //       });
+    //     }
+    //   } catch (error) {
+    //     res.send({ succcess: false, errror: error.message });
+    //   }
+    // });
+
     // get Buyer email and make Buyer Route
     app.get("/user/buyers/:email", async (req, res) => {
       const email = req.params.email;
