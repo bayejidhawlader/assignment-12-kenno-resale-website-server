@@ -106,8 +106,7 @@ async function run() {
       res.status(403).send({ accessToken: "" });
     });
 
-    // All Users
-
+    // Show All Users
     app.post("/users", async (req, res) => {
       const user = req.body;
       console.log(user);
@@ -136,7 +135,7 @@ async function run() {
       res.send(options);
     });
 
-    // Delete Seller Click Handleing
+    // Delete Seller Using Click Handleing
     app.delete("/user/sellers/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
@@ -162,7 +161,6 @@ async function run() {
     // Show all Buyer
     app.get("/user/buyers", async (req, res) => {
       const option = {};
-      // const query = { option }
       const options = await usersCollection.find({ role: "buyer" }).toArray();
       res.send(options);
     });
