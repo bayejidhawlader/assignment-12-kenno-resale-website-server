@@ -88,15 +88,6 @@ async function run() {
       res.send(result);
     });
 
-    // See All Admin Here
-    // const adminCollection = client.db("kennoAssinment12").collection("admin");
-    // app.get("/isAdmin", (req, res) => {
-    //   const email = req.body.email;
-    //   adminCollection.find({ email: email }).toArray((arr, document) => {
-    //     res.send(document.length > 0);
-    //   });
-    // });
-
     // Jwt
     app.get("/jwt", async (req, res) => {
       const email = req.query.email;
