@@ -134,14 +134,6 @@ async function run() {
       });
     });
 
-    // All Seller Showing to Admin Dashboard
-    // app.get("/seller", async (req, res) => {
-    //   const query = {};
-    //   const seller = await usersCollection.find(query).toArray();
-    //   res.send(seller);
-    //   res.send({ seller: user?.role == "seller" });
-    // });
-
     // Show all seller
     app.get("/user/sellers", async (req, res) => {
       const option = {};
@@ -227,6 +219,16 @@ async function run() {
         updatedDoc,
         options
       );
+      res.send(result);
+    });
+
+    // Find Product Category from productCollection
+    app.get("/productCategory", async (req, res) => {
+      const query = {};
+      const result = await productCollection
+        .find(query)
+        .project({ brandName: 1 })
+        .toArray();
       res.send(result);
     });
 
