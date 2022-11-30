@@ -28,8 +28,9 @@ const client = new MongoClient(uri, {
 
 // 15 Veryfy JWT
 function verifyJWT(req, res, next) {
-  console.log("Token Inside verify JWT", req.headers.authorization);
+  // console.log("Token Inside verify JWT", req.headers.authorization);
   const authHeader = req.headers.authorization;
+  console.log(authHeader);
   if (!authHeader) {
     return res.status(401).send("unsuthorize access");
   }
@@ -52,6 +53,8 @@ async function run() {
       .db("kennoAssinment12")
       .collection("categoryProduct");
 
+    const usersCollection = client.db("kennoAssinment12").collection("users");
+
     // 07 Show 3 category and 6 Product
     app.get("/category", async (req, res) => {
       const query = {};
@@ -73,6 +76,7 @@ async function run() {
     app.get("/bookings", verifyJWT, async (req, res) => {
       const email = req.query.email;
       const decodedEmail = req.decoded.email;
+      console.log(email, decodedEmail);
       if (email !== decodedEmail) {
         return res.status(403).send({ message: "forbidenn access" });
       }
@@ -83,7 +87,7 @@ async function run() {
 
     app.post("/bookings", async (req, res) => {
       const booking = req.body;
-      console.log(booking);
+      // console.log(booking);
       const result = await bookingCollection.insertOne(booking);
       res.send(result);
     });
@@ -93,7 +97,7 @@ async function run() {
       const email = req.query.email;
       const query = { email: email };
       const user = await usersCollection.findOne(query);
-      console.log(user);
+      console.log(user, email);
       if (user) {
         const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, {
           expiresIn: "7d",
@@ -104,7 +108,7 @@ async function run() {
     });
 
     // All Users
-    const usersCollection = client.db("kennoAssinment12").collection("users");
+
     app.post("/users", async (req, res) => {
       const user = req.body;
       console.log(user);
@@ -171,24 +175,6 @@ async function run() {
       const result = await usersCollection.deleteOne(filter);
       res.send(result);
     });
-
-    // USer created for Social Media Login
-    // app.post("/user", async (req, res) => {
-    //   try {
-    //     const user = req.body;
-    //     const haveAccount = await users.insertOne({ email: user.email });
-    //     if (!haveAccount) {
-    //       const users = await users.insertOne(user);
-    //       res.send({
-    //         succcess: true,
-    //         message: "Successfully created a new User",
-    //         data: users,
-    //       });
-    //     }
-    //   } catch (error) {
-    //     res.send({ succcess: false, errror: error.message });
-    //   }
-    // });
 
     // get Buyer email and make Buyer Route
     app.get("/user/buyers/:email", async (req, res) => {
