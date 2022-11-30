@@ -28,7 +28,6 @@ const client = new MongoClient(uri, {
 
 // 15 Veryfy JWT
 function verifyJWT(req, res, next) {
-  // console.log("Token Inside verify JWT", req.headers.authorization);
   const authHeader = req.headers.authorization;
   console.log(authHeader);
   if (!authHeader) {
@@ -87,7 +86,7 @@ async function run() {
 
     app.post("/bookings", async (req, res) => {
       const booking = req.body;
-      // console.log(booking);
+
       const result = await bookingCollection.insertOne(booking);
       res.send(result);
     });
