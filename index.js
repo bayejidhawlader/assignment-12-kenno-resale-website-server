@@ -165,6 +165,14 @@ async function run() {
       res.send({ isSeller: user?.role == "seller" });
     });
 
+    // get Seller email and make Seller Route
+    app.get("/user/sellers/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isBuyer: user?.role === "seller" });
+    });
+
     // Show all Buyer
     app.get("/user/buyers", async (req, res) => {
       const option = {};
@@ -179,6 +187,14 @@ async function run() {
       const filter = { _id: ObjectId(id) };
       const result = await usersCollection.deleteOne(filter);
       res.send(result);
+    });
+
+    // get Buyer email and make Buyer Route
+    app.get("/user/buyers/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isBuyer: user?.role === "buyer" });
     });
 
     // Check a user Admin or Not useAdmin.js (DashBoardLayout.js 6)
